@@ -1,41 +1,41 @@
-# Velvet Glass — Glassmorphism Sidebar
+# Velvet Glass - Glassmorphism Sidebar
 
 > A premium glassmorphism sidebar built with pure CSS `backdrop-filter`, Tailwind CSS, and Remix Icons. Part of the **DevIgnitor CSS Tricks** series.
 
 ---
 
-![Velvet Glass — Main Preview](./velvet-preview.jpg)
+![Velvet Glass - Main Preview](./velvet-preview.jpg)
 
 ---
 
 ## What is Velvet Glass?
 
-**Velvet Glass** is a fully self-contained, production-quality sidebar UI component that demonstrates the power of CSS `backdrop-filter` in a real-world layout. The glass doesn't fake depth — it earns it. A living background of softly spawning and fading colored circles gives the frosted glass surface genuine visual work to do, so the blur effect reads as real material rather than a stylesheet trick.
+**Velvet Glass** is a fully self-contained, production-quality sidebar UI component that demonstrates the power of CSS `backdrop-filter` in a real-world layout. The glass doesn't fake depth - it earns it. A living background of softly spawning and fading colored circles gives the frosted glass surface genuine visual work to do, so the blur effect reads as real material rather than a stylesheet trick.
 
-The name came from the feel: not cold or clinical, but warm, soft, and tactile — like light filtered through frosted silk.
+The name came from the feel: not cold or clinical, but warm, soft, and tactile - like light filtered through frosted silk.
 
-Built as part of the [DevIgnitor Sidebar](https://devignitor.com) series — a growing library of interactive CSS demos for developers who learn by seeing.
+Built as part of the [DevIgnitor Sidebar](https://devignitor.com) series - a growing library of interactive CSS demos for developers who learn by seeing.
 
 ---
 
-![Velvet Glass — Dark Mode](./velvet-preview-2.jpg)
+![Velvet Glass - Dark Mode](./velvet-preview-2.jpg)
 
 ---
 
 ## Features
 
-- **True neutral glass** — sidebar uses zero color tint; it reads as pure frosted material in both themes
-- **Floating bubble background** — colorful circles spawn at random positions, fade in over ~0.6s, hold, then fade out; new ones appear every 500–600ms
-- **Dark / Light theme toggle** — full token swap via CSS custom properties; glass values, bubble opacity, dot grid, and base gradients all adapt
-- **Collapse / expand sidebar** — smooth `cubic-bezier` width transition from `256px` → `64px`; labels, badges, and section titles fade out; icon-only mode with hover tooltips
-- **Edge toggle button** — circular pill button sitting exactly on the right border of the sidebar (`right: -14px`), vertically centered; turns red on hover with glow
-- **Active nav state** — red left border strip, glow effect, accent-colored icon, subtle background highlight
-- **CSS Tools accordion** — expand/collapse sub-menu with smooth `max-height` transition and rotating chevron
-- **Ripple effect** — on every nav item click
-- **Notification badge** — with animated CSS-only ping ring
-- **User card footer** — avatar gradient, online status dot, three action buttons
-- **Live CSS annotation** — bottom-right chip shows the exact `backdrop-filter` values currently active, updates on theme switch
-- **Red Hat Text font** — 300–700 weight range across all UI; DM Mono for code labels, badges, and mono annotations
+- **True neutral glass** - sidebar uses zero color tint; it reads as pure frosted material in both themes
+- **Floating bubble background** - colorful circles spawn at random positions, fade in over ~0.6s, hold, then fade out; new ones appear every 500–600ms
+- **Dark / Light theme toggle** - full token swap via CSS custom properties; glass values, bubble opacity, dot grid, and base gradients all adapt
+- **Collapse / expand sidebar** - smooth `cubic-bezier` width transition from `256px` → `64px`; labels, badges, and section titles fade out; icon-only mode with hover tooltips
+- **Edge toggle button** - circular pill button sitting exactly on the right border of the sidebar (`right: -14px`), vertically centered; turns red on hover with glow
+- **Active nav state** - red left border strip, glow effect, accent-colored icon, subtle background highlight
+- **CSS Tools accordion** - expand/collapse sub-menu with smooth `max-height` transition and rotating chevron
+- **Ripple effect** - on every nav item click
+- **Notification badge** - with animated CSS-only ping ring
+- **User card footer** - avatar gradient, online status dot, three action buttons
+- **Live CSS annotation** - bottom-right chip shows the exact `backdrop-filter` values currently active, updates on theme switch
+- **Red Hat Text font** - 300–700 weight range across all UI; DM Mono for code labels, badges, and mono annotations
 
 ---
 
@@ -45,10 +45,10 @@ Built as part of the [DevIgnitor Sidebar](https://devignitor.com) series — a g
 |---|---|
 | `backdrop-filter: blur(32px) saturate(160%)` | Sidebar, all glass panels, stat cards |
 | `-webkit-backdrop-filter` | Safari fallback on all glass elements |
-| `background: rgba(255,255,255,0.038)` | Sidebar glass fill — dark mode |
-| `background: rgba(255,255,255,0.52)` | Sidebar glass fill — light mode |
-| `border: 1px solid rgba(255,255,255,0.085)` | Glass border — dark mode |
-| `border: 1px solid rgba(255,255,255,0.72)` | Glass border — light mode |
+| `background: rgba(255,255,255,0.038)` | Sidebar glass fill - dark mode |
+| `background: rgba(255,255,255,0.52)` | Sidebar glass fill - light mode |
+| `border: 1px solid rgba(255,255,255,0.085)` | Glass border - dark mode |
+| `border: 1px solid rgba(255,255,255,0.72)` | Glass border - light mode |
 | `transition: width 0.38s cubic-bezier(0.4,0,0.2,1)` | Sidebar collapse animation |
 | `animation: bubble-life` | Floating background circles |
 | `@keyframes` | Logo pulse, badge ping, bubble fade, bar chart entry |
@@ -67,7 +67,7 @@ All colors are applied as CSS custom properties and adapt between dark and light
 | Red Glow | `rgba(230,51,41,0.28)` | Box shadows and ambient glow |
 | Red Soft | `rgba(230,51,41,0.10)` | Active background fills |
 
-### Glass Surfaces — Dark Mode
+### Glass Surfaces - Dark Mode
 
 | Token | Value | Usage |
 |---|---|---|
@@ -78,7 +78,7 @@ All colors are applied as CSS custom properties and adapt between dark and light
 | `--glass-active` | `rgba(230,51,41,0.09)` | Active nav item fill |
 | `--bg` | `#0c0c14` | Page background |
 
-### Glass Surfaces — Light Mode
+### Glass Surfaces - Light Mode
 
 | Token | Value | Usage |
 |---|---|---|
@@ -120,7 +120,7 @@ All colors are applied as CSS custom properties and adapt between dark and light
 | Icons | Remix Icons 4.2 |
 | Font | Red Hat Text (Google Fonts) |
 | Mono font | DM Mono (Google Fonts) |
-| JavaScript | Vanilla — no framework, no build step |
+| JavaScript | Vanilla - no framework, no build step |
 | Dependencies | Zero npm packages |
 
 ---
@@ -133,7 +133,7 @@ All colors are applied as CSS custom properties and adapt between dark and light
 └── README.md
 ```
 
-Everything — HTML, `<style>`, and `<script>` — lives in a single `.html` file. Open it in any browser. No server, no build step, no `node_modules`.
+Everything - HTML, `<style>`, and `<script>` - lives in a single `.html` file. Open it in any browser. No server, no build step, no `node_modules`.
 
 ---
 
@@ -168,7 +168,7 @@ html.light {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
 
-  /* The core — blur what's behind the element */
+  /* The core - blur what's behind the element */
   backdrop-filter: blur(32px) saturate(160%);
   -webkit-backdrop-filter: blur(32px) saturate(160%); /* Safari */
 
@@ -275,7 +275,7 @@ function toggleTheme() {
 }
 ```
 
-Your CSS variables in `:root` (dark) and `html.light` handle everything automatically — no JS color manipulation needed.
+Your CSS variables in `:root` (dark) and `html.light` handle everything automatically - no JS color manipulation needed.
 
 ---
 
@@ -328,8 +328,8 @@ More tricks added regularly. Star the repo to follow along.
 
 ## License
 
-MIT — free to use, modify, and ship in your own projects. Credit appreciated but not required.
+MIT - free to use, modify, and ship in your own projects. Credit appreciated but not required.
 
 ---
 
-> Built by [DevIgnitor](https://devignitor.com) — tools, tutorials, and CSS tricks for developers who build real things.
+> Built by [DevIgnitor](https://devignitor.com) - tools, tutorials, and CSS tricks for developers who build real things.
