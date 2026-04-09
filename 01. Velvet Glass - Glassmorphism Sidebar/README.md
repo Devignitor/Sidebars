@@ -4,7 +4,7 @@
 
 ---
 
-![Velvet Glass — Main Preview](./images/velvet-glass-1.png)
+![Velvet Glass — Main Preview](./velvet-preview.jpg)
 
 ---
 
@@ -18,7 +18,7 @@ Built as part of the [DevIgnitor Sidebar](https://devignitor.com) series — a g
 
 ---
 
-![Velvet Glass — Dark Mode](./images/velvet-glass-2.png)
+![Velvet Glass — Dark Mode](./velvet-preview-2.jpg)
 
 ---
 
