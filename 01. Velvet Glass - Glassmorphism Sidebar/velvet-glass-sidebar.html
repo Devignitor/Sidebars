@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velvet Glass — DevIgnitor CSS Elements</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Red Hat Text', 'sans-serif'],
+        mono: ['DM Mono', 'monospace'],
+      }
+    }
+  }
+}
+</script>
+
+<style>
+/* THEME TOKENS */
+:root {
+  --accent:        #bd417a;
+  --accent-glow:   rgba(230, 41, 129, 0.28);
+  --accent-soft:   rgba(230,51,41,0.10);
+
+  /* Dark */
+  --bg:            #000000;
+  --glass-bg:      rgba(255,255,255,0.038);
+  --glass-border:  rgba(255,255,255,0.085);
+  --glass-top:     rgba(255,255,255,0.16);
+  --glass-hover:   rgba(255,255,255,0.06);
+  --glass-active:  rgba(230,51,41,0.09);
+  --text-1:        rgba(255,255,255,0.90);
+  --text-2:        rgba(255,255,255,0.42);
+  --text-3:        rgba(255,255,255,0.20);
+  --divider:       rgba(255,255,255,0.065);
+  --sidebar-glow:  0 0 0 1px rgba(255,255,255,0.055), 6px 0 48px rgba(0,0,0,0.55), inset -1px 0 0 rgba(255,255,255,0.04);
+
+  /* Floating circles dark */
+  --bubble-opacity-dark: 0.18;
+}
+
+html.light {
+  --bg:            #eceaf6;
+  --glass-bg:      rgba(255,255,255,0.52);
+  --glass-border:  rgba(255,255,255,0.72);
+  --glass-top:     rgba(255,255,255,0.98);
+  --glass-hover:   rgba(255,255,255,0.65);
+  --glass-active:  rgba(230,51,41,0.07);
+  --text-1:        rgba(14,12,28,0.90);
+  --text-2:        rgba(14,12,28,0.46);
+  --text-3:        rgba(14,12,28,0.22);
+  --divider:       rgba(0,0,0,0.07);
+  --sidebar-glow:  0 0 0 1px rgba(255,255,255,0.9), 6px 0 40px rgba(160,140,220,0.12), inset -1px 0 0 rgba(255,255,255,0.7);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Red Hat Text', sans-serif;
+  color: var(--text-1);
+  overflow: hidden;
+  height: 100vh;
+  transition: background 0.45s ease;
+}
+
+/* BACKGROUND CANVAS */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Soft gradient base — dark */
+.bg-base {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 20%, rgba(134, 134, 134, 0.28) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 50% at 85% 80%, rgba(44, 44, 44, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 70% 15%, rgba(200, 30, 95, 0.14) 0%, transparent 60%);
+  transition: opacity 0.5s ease;
+}
+html.light .bg-base {
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 20%, rgba(160,130,240,0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 50% at 85% 80%, rgba(240,110,100,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 70% 15%, rgba(80,180,230,0.12) 0%, transparent 60%);
+}
+
+html.light .bg-dots {
+  background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
+}
+
+/* Floating circles container */
+#bubbles { position: absolute; inset: 0; }
+
+/* Bubble keyframe */
+@keyframes bubble-life {
+  0%   { opacity: 0; transform: scale(0.4); }
+  20%  { opacity: 1; transform: scale(1); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.85); }
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  animation: bubble-life linear forwards;
+  pointer-events: none;
+}
+
+/* 
+   SIDEBAR
+ */
+#sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 256px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(160%) brightness(1.04);
+  -webkit-backdrop-filter: blur(32px) saturate(160%) brightness(1.04);
+  border-right: 1px solid var(--glass-border);
+  transition: width 0.38s cubic-bezier(0.4,0,0.2,1);
+  overflow: visible; /* so edge button doesn't clip */
+}
+
+/* top sheen */
+#sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--glass-top);
+  pointer-events: none;
+  z-index: 1;
+}
+
+#sidebar.collapsed { width: 64px; }
+
+/*  EDGE TOGGLE BUTTON  */
+/* Sits on the right edge of the sidebar, vertically centered */
+#edge-btn {
+  position: absolute;
+  right: -15px;
+  top: 30px;
+  transform: translateY(-50%);
+  z-index: 200;
+  width: 15px;
+  height: 28px;
+  border-radius: 5%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--glass-border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25), 0 0 0 1px var(--glass-top) inset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-2);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+#edge-btn:hover {
+  background: var(--accent);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 16px var(--accent-glow), 0 2px 12px rgba(0,0,0,0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+/*  SIDEBAR HEADER  */
+.s-header {
+  padding: 18px 14px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--divider);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 18px var(--accent-glow), 0 3px 10px rgba(0,0,0,0.25);
+  position: relative;
+}
+.logo-mark::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 11px;
+  border: 1px solid rgba(230,51,41,0.28);
+  animation: mark-breathe 3.5s ease-in-out infinite;
+}
+@keyframes mark-breathe {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.35; transform:scale(1.1); }
+}
+
+.logo-text {
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.22s ease, max-width 0.38s cubic-bezier(0.4,0,0.2,1);
+  max-width: 200px;
+}
+#sidebar.collapsed .logo-text { opacity:0; max-width:0; }
+
+.logo-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+.logo-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/*  NAV  */
+.s-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--divider) transparent;
+}
+.s-nav::-webkit-scrollbar { width: 2px; }
+.s-nav::-webkit-scrollbar-thumb { background: var(--divider); }
+
+.nav-group { margin-bottom: 6px; }
+
+.group-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 6px 10px 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+#sidebar.collapsed .group-label { opacity:0; }
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  margin-bottom: 1px;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  user-select: none;
+  overflow: hidden;
+  text-decoration: none;
+}
+.nav-item:hover {
+  background: var(--glass-hover);
+  border-color: var(--glass-border);
+  color: var(--text-1);
+  transform: translateX(3px);
+}
+.nav-item.active {
+  background: var(--glass-active);
+  border-color: rgba(230,51,41,0.18);
+  color: var(--accent);
+  box-shadow: inset 0 0 24px rgba(230,51,41,0.05);
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 22%; bottom: 22%;
+  width: 2.5px;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.nav-icon {
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  transition: all 0.2s;
+}
+.nav-item.active .nav-icon { color: var(--accent); }
+
+.nav-label {
+  flex: 1;
+  overflow: hidden;
+  transition: opacity 0.2s, max-width 0.38s cubic-bezier(0.4,0,0.2,1);
+  max-width: 160px;
+}
+#sidebar.collapsed .nav-label { opacity:0; max-width:0; }
+
+/* badge */
+.nbadge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 1.5px 6px;
+  border-radius: 20px;
+  background: var(--accent);
+  color: #fff;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+  position: relative;
+}
+.nbadge::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  background: var(--accent);
+  opacity: 0.3;
+  animation: ping 2.2s ease-out infinite;
+}
+@keyframes ping {
+  0%   { transform:scale(1); opacity:0.4; }
+  75%,100% { transform:scale(2); opacity:0; }
+}
+#sidebar.collapsed .nbadge { opacity:0; }
+
+/* chevron */
+.nchev {
+  font-size: 13px;
+  color: var(--text-3);
+  transition: transform 0.25s ease, opacity 0.2s;
+  flex-shrink: 0;
+}
+.nchev.open { transform: rotate(90deg); }
+#sidebar.collapsed .nchev { opacity:0; }
+
+/* sub-menu */
+.sub-menu {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.sub-menu.open { max-height: 280px; }
+#sidebar.collapsed .sub-menu { max-height:0 !important; }
+
+.sub-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 26px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 400;
+  margin-bottom: 1px;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  position: relative;
+}
+.sub-item::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-3);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.sub-item:hover { color: var(--text-1); background: var(--glass-hover); }
+.sub-item:hover::before { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+.sub-item.s-active { color: var(--accent); }
+.sub-item.s-active::before { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+
+/* divider */
+.s-divider { height: 1px; background: var(--divider); margin: 6px 10px; }
+
+/* tooltip */
+.tip {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%; transform: translateY(-50%);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-1);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 7px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 999;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.tip::before {
+  content: '';
+  position: absolute;
+  right: 100%; top: 50%; transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-right-color: var(--glass-border);
+}
+#sidebar.collapsed .nav-item:hover .tip { opacity: 1; }
+
+/*  SIDEBAR FOOTER  */
+.s-footer {
+  padding: 10px 8px 14px;
+  border-top: 1px solid var(--divider);
+  flex-shrink: 0;
+}
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-hover);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+.user-card:hover { border-color: rgba(230,51,41,0.22); box-shadow: 0 0 18px rgba(230,51,41,0.07); }
+
+.u-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5b3fd4, #e63329);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+  position: relative;
+}
+.u-status {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 8px; height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 6px rgba(34,197,94,0.6);
+}
+.u-info {
+  flex: 1;
+  overflow: hidden;
+  transition: opacity 0.2s, max-width 0.38s cubic-bezier(0.4,0,0.2,1);
+  max-width: 160px;
+}
+#sidebar.collapsed .u-info { opacity:0; max-width:0; }
+.u-name { font-size: 12px; font-weight: 600; color: var(--text-1); white-space: nowrap; }
+.u-role { font-family:'DM Mono',monospace; font-size: 9px; color: var(--text-3); letter-spacing:0.07em; margin-top:1px; white-space:nowrap; }
+
+.u-actions { display:flex; gap:2px; transition: opacity 0.2s; }
+#sidebar.collapsed .u-actions { opacity:0; }
+.u-btn {
+  width:24px; height:24px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:6px; color: var(--text-3); font-size:13px;
+  cursor:pointer; transition:all 0.15s ease; border:1px solid transparent;
+}
+.u-btn:hover { background:var(--glass-active); color:var(--accent); border-color:rgba(230,51,41,0.18); }
+
+/* 
+   MAIN CONTENT
+ */
+#main {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  left: 256px;
+  transition: left 0.38s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+  padding: 26px 30px;
+  z-index: 10;
+}
+#main.wide { left: 64px; }
+#main::-webkit-scrollbar { width: 3px; }
+#main::-webkit-scrollbar-thumb { background: var(--divider); }
+
+/* top bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+}
+.pg-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.022em;
+  line-height: 1;
+}
+.pg-crumb {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+.pg-crumb span { color: var(--accent); }
+
+.tb-right { display: flex; align-items: center; gap: 8px; }
+
+.tb-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 9px;
+  color: var(--text-2);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.tb-btn:hover { background: var(--glass-hover); color: var(--text-1); border-color: var(--glass-top); }
+
+.notif-dot {
+  position: absolute;
+  top: 7px; right: 7px;
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 1.5px solid var(--bg);
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+
+.theme-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 9px;
+  color: var(--text-2);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-btn:hover { color: var(--accent); border-color: rgba(230,51,41,0.3); box-shadow: 0 0 14px var(--accent-glow); background: var(--glass-hover); }
+
+/* stats grid */
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+
+.stat-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border-radius: 13px;
+  padding: 17px 18px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  animation: fadein-up 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+.stat-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background: var(--glass-top);
+}
+.stat-card:hover { transform: translateY(-3px); border-color: rgba(230,51,41,0.22); box-shadow: 0 10px 36px rgba(0,0,0,0.18), 0 0 0 1px rgba(230,51,41,0.09); }
+.stat-card.hi { border-color: rgba(230,51,41,0.25); }
+
+.stat-card:nth-child(1){ animation-delay:.05s }
+.stat-card:nth-child(2){ animation-delay:.12s }
+.stat-card:nth-child(3){ animation-delay:.19s }
+.stat-card:nth-child(4){ animation-delay:.26s }
+
+@keyframes fadein-up {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.s-icon {
+  width:34px; height:34px;
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px;
+  margin-bottom:13px;
+}
+.s-val {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.s-lbl {
+  font-family:'DM Mono',monospace;
+  font-size:9.5px;
+  color:var(--text-2);
+  letter-spacing:0.09em;
+  text-transform:uppercase;
+}
+.s-change {
+  position:absolute; top:14px; right:14px;
+  font-family:'DM Mono',monospace;
+  font-size:9px; padding:2px 7px; border-radius:20px; font-weight:500;
+}
+.up   { background:rgba(34,197,94,0.1); color:#22c55e; }
+.down { background:rgba(230,51,41,0.09); color:var(--accent); }
+
+/* content grid */
+.cgrid { display:grid; grid-template-columns:1fr 320px; gap:12px; }
+
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border-radius: 13px;
+  overflow: hidden;
+  position: relative;
+  animation: fadein-up 0.5s cubic-bezier(0.22,1,0.36,1) 0.28s both;
+}
+.glass-panel::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:var(--glass-top); pointer-events:none;
+}
+
+.ph {
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--divider);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pt { font-size:13.5px; font-weight:600; color:var(--text-1); letter-spacing:-0.01em; }
+
+.ptag {
+  font-family:'DM Mono',monospace;
+  font-size:9px; padding:2px 8px; border-radius:20px;
+  letter-spacing:0.1em; text-transform:uppercase;
+}
+.tl { background:rgba(34,197,94,0.1); color:#22c55e; border:1px solid rgba(34,197,94,0.2); }
+.tn { background:var(--accent-soft); color:var(--accent); border:1px solid rgba(230,51,41,0.18); }
+
+/* chart */
+.chart-area { padding:18px; }
+.chart-bars { display:flex; align-items:flex-end; gap:7px; height:130px; margin-bottom:7px; }
+.bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; }
+.bar { width:100%; border-radius:3px 3px 0 0; cursor:pointer; transition:opacity 0.2s; }
+.bar:hover { opacity:0.75!important; }
+.bar-lbl { font-family:'DM Mono',monospace; font-size:9px; color:var(--text-3); }
+
+/* skill bars */
+.skill-item { padding:11px 18px; }
+.sk-hd { display:flex; justify-content:space-between; margin-bottom:6px; }
+.sk-nm { font-size:12.5px; font-weight:500; color:var(--text-1); }
+.sk-pc { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-2); }
+.sk-bar { height:3px; background:var(--divider); border-radius:2px; overflow:hidden; }
+.sk-fill { height:100%; border-radius:2px; transition:width 1s cubic-bezier(0.34,1.56,0.64,1); }
+
+/* activity */
+.act-item {
+  display:flex; align-items:center; gap:11px;
+  padding:10px 18px;
+  border-bottom:1px solid var(--divider);
+  cursor:pointer; transition:background 0.15s;
+}
+.act-item:last-child { border-bottom:none; }
+.act-item:hover { background:var(--glass-hover); }
+.act-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.act-txt { flex:1; }
+.act-main { font-size:12px; font-weight:500; color:var(--text-1); line-height:1.35; }
+.act-time { font-family:'DM Mono',monospace; font-size:9px; color:var(--text-3); margin-top:1px; }
+.act-badge { font-family:'DM Mono',monospace; font-size:9px; padding:2px 7px; border-radius:20px; flex-shrink:0; }
+
+/* ripple */
+.rpl-wrap { position:relative; overflow:hidden; }
+.rpl {
+  position:absolute; border-radius:50%;
+  transform:scale(0); animation:rpl-anim 0.55s linear;
+  background:rgba(230,51,41,0.12); pointer-events:none;
+}
+@keyframes rpl-anim { to { transform:scale(4); opacity:0; } }
+
+/* annotation chip */
+.ann-chip {
+  position:fixed; bottom:22px; right:26px;
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-radius:10px; padding:11px 15px;
+  z-index:200; pointer-events:none;
+}
+.ann-chip::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:var(--glass-top); border-radius:10px 10px 0 0;
+}
+.ann-lbl { font-family:'DM Mono',monospace; font-size:8.5px; color:var(--text-3); letter-spacing:0.13em; text-transform:uppercase; margin-bottom:5px; }
+.ann-p { font-family:'DM Mono',monospace; font-size:9.5px; color:var(--accent); line-height:1.8; }
+.ann-p.d { color:rgba(230,51,41,0.55); }
+.ann-p.dd { color:rgba(230,51,41,0.38); }
+</style>
+</head>
+<body>
+
+<!--  BACKGROUND  -->
+<div id="bg-canvas">
+  <div class="bg-base"></div>
+  <div id="bubbles"></div>
+</div>
+
+<!--  SIDEBAR  -->
+<aside id="sidebar">
+
+  <!-- Edge toggle — on the right border of the sidebar -->
+  <button id="edge-btn" onclick="toggleSidebar()" title="Toggle sidebar">
+    <i class="ri-arrow-left-s-line" id="edge-icon"></i>
+  </button>
+
+  <!-- Header -->
+  <div class="s-header">
+    <div class="logo-mark">
+      <i class="ri-code-s-slash-line" style="color:#fff;font-size:16px"></i>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name">Devignitor</div>
+      <div class="logo-tag mt-1">// Velvet Glass</div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="s-nav">
+
+    <div class="nav-group">
+      <div class="group-label">Main</div>
+
+      <div class="nav-item active rpl-wrap" onclick="setActive(this,'Dashboard');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-dashboard-3-line"></i></div>
+        <span class="nav-label">Dashboard</span>
+        <span class="tip">Dashboard</span>
+      </div>
+
+      <div class="nav-item rpl-wrap" onclick="setActive(this,'Analytics');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-bar-chart-grouped-line"></i></div>
+        <span class="nav-label">Analytics</span>
+        <span class="nbadge">4</span>
+        <span class="tip">Analytics</span>
+      </div>
+
+      <div class="nav-item rpl-wrap" onclick="setActive(this,'Projects');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-folder-line"></i></div>
+        <span class="nav-label">Projects</span>
+        <span class="tip">Projects</span>
+      </div>
+
+      <div class="nav-item rpl-wrap" onclick="toggleAccordion();ripple(event,this)">
+        <div class="nav-icon"><i class="ri-tools-line"></i></div>
+        <span class="nav-label">CSS Tools</span>
+        <i class="ri-arrow-right-s-line nchev" id="acc-chev"></i>
+        <span class="tip">CSS Tools</span>
+      </div>
+      <div class="sub-menu" id="acc-sub">
+        <div class="sub-item" onclick="setSub(this)">Glass Generator</div>
+        <div class="sub-item s-active" onclick="setSub(this)">Gradient Maker</div>
+        <div class="sub-item" onclick="setSub(this)">Clamp Calculator</div>
+        <div class="sub-item" onclick="setSub(this)">Shadow Builder</div>
+      </div>
+    </div>
+
+    <div class="s-divider"></div>
+
+    <div class="nav-group">
+      <div class="group-label">Content</div>
+
+      <div class="nav-item rpl-wrap" onclick="setActive(this,'Tutorials');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-video-line"></i></div>
+        <span class="nav-label">Tutorials</span>
+        <span class="tip">Tutorials</span>
+      </div>
+
+      <div class="nav-item rpl-wrap" onclick="setActive(this,'Snippets');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-code-box-line"></i></div>
+        <span class="nav-label">Snippets</span>
+        <span class="tip">Snippets</span>
+      </div>
+
+      <div class="nav-item rpl-wrap" onclick="setActive(this,'Certifications');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-award-line"></i></div>
+        <span class="nav-label">Certifications</span>
+        <span class="tip">Certifications</span>
+      </div>
+    </div>
+
+    <div class="s-divider"></div>
+
+    <div class="nav-group">
+      <div class="group-label">Account</div>
+
+      <div class="nav-item rpl-wrap" onclick="setActive(this,'Settings');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-settings-4-line"></i></div>
+        <span class="nav-label">Settings</span>
+        <span class="tip">Settings</span>
+      </div>
+
+      <div class="nav-item rpl-wrap" onclick="setActive(this,'API Keys');ripple(event,this)">
+        <div class="nav-icon"><i class="ri-key-2-line"></i></div>
+        <span class="nav-label">API Keys</span>
+        <span class="tip">API Keys</span>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- Footer -->
+  <div class="s-footer">
+    <div class="user-card">
+      <div class="u-avatar">
+        AI
+        <div class="u-status"></div>
+      </div>
+      <div class="u-info">
+        <div class="u-name">Ali — DevIgnitor</div>
+        <div class="u-role">// team lead · pro</div>
+      </div>
+      <div class="u-actions">
+        <div class="u-btn" title="Notifications"><i class="ri-notification-3-line"></i></div>
+        <div class="u-btn" title="Settings"><i class="ri-settings-3-line"></i></div>
+        <div class="u-btn" title="Logout"><i class="ri-logout-box-r-line"></i></div>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<!--  MAIN  -->
+<main id="main">
+
+  <div class="topbar">
+    <div>
+      <div class="pg-title" id="pg-title">Dashboard</div>
+      <div class="pg-crumb">devignitor.com / <span id="pg-crumb">dashboard</span></div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-btn"><i class="ri-search-line"></i></div>
+      <div class="tb-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></div>
+      <div class="theme-btn" onclick="toggleTheme()" id="theme-btn"><i class="ri-moon-line" id="theme-icon"></i></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card hi">
+      <div class="s-icon" style="background:rgba(230,51,41,0.1);color:var(--accent)"><i class="ri-eye-line"></i></div>
+      <span class="s-change up">+18%</span>
+      <div class="s-val">48.2K</div>
+      <div class="s-lbl">Total Views</div>
+    </div>
+    <div class="stat-card">
+      <div class="s-icon" style="background:rgba(124,92,252,0.1);color:#7c5cfc"><i class="ri-code-s-slash-line"></i></div>
+      <span class="s-change up">+5</span>
+      <div class="s-val">127</div>
+      <div class="s-lbl">CSS Tricks</div>
+    </div>
+    <div class="stat-card">
+      <div class="s-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><i class="ri-group-line"></i></div>
+      <span class="s-change up">+240</span>
+      <div class="s-val">9.4K</div>
+      <div class="s-lbl">Developers</div>
+    </div>
+    <div class="stat-card">
+      <div class="s-icon" style="background:rgba(14,165,201,0.1);color:#0ea5c9"><i class="ri-star-line"></i></div>
+      <span class="s-change down">-2</span>
+      <div class="s-val">4.9</div>
+      <div class="s-lbl">Avg Rating</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="cgrid">
+
+    <div class="glass-panel">
+      <div class="ph">
+        <span class="pt">Weekly Traffic</span>
+        <span class="ptag tl">● Live</span>
+      </div>
+      <div class="chart-area">
+        <div class="chart-bars" id="chart-bars"></div>
+        <div style="height:1px;background:var(--divider);margin-bottom:10px"></div>
+        <div style="display:flex;gap:14px">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-3)">Peak: <span style="color:var(--accent)">Thu — 8.4K</span></span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-3)">Avg: <span style="color:var(--text-2)">5.2K/day</span></span>
+        </div>
+      </div>
+
+      <div class="ph" style="margin-top:2px">
+        <span class="pt">CSS Property Mastery</span>
+        <span class="ptag tn">Updated</span>
+      </div>
+      <div style="padding-bottom:6px">
+        <div class="skill-item">
+          <div class="sk-hd"><span class="sk-nm">backdrop-filter</span><span class="sk-pc">94%</span></div>
+          <div class="sk-bar"><div class="sk-fill" style="width:94%;background:var(--accent)"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="sk-hd"><span class="sk-nm">CSS Grid & Subgrid</span><span class="sk-pc">88%</span></div>
+          <div class="sk-bar"><div class="sk-fill" style="width:88%;background:#7c5cfc"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="sk-hd"><span class="sk-nm">CSS Animations</span><span class="sk-pc">81%</span></div>
+          <div class="sk-bar"><div class="sk-fill" style="width:81%;background:#0ea5c9"></div></div>
+        </div>
+        <div class="skill-item" style="margin-bottom:6px">
+          <div class="sk-hd"><span class="sk-nm">Container Queries</span><span class="sk-pc">73%</span></div>
+          <div class="sk-bar"><div class="sk-fill" style="width:73%;background:#22c55e"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-panel">
+      <div class="ph">
+        <span class="pt">Recent Activity</span>
+        <i class="ri-more-2-fill" style="color:var(--text-3);cursor:pointer;font-size:15px"></i>
+      </div>
+      <div>
+        <div class="act-item">
+          <div class="act-dot" style="background:#22c55e;box-shadow:0 0 5px rgba(34,197,94,0.5)"></div>
+          <div class="act-txt">
+            <div class="act-main">Velvet Glass sidebar published</div>
+            <div class="act-time">2 min ago</div>
+          </div>
+          <span class="act-badge" style="background:rgba(34,197,94,0.1);color:#22c55e">New</span>
+        </div>
+        <div class="act-item">
+          <div class="act-dot" style="background:var(--accent);box-shadow:0 0 5px var(--accent-glow)"></div>
+          <div class="act-txt">
+            <div class="act-main">backdrop-filter demo recorded</div>
+            <div class="act-time">1h ago</div>
+          </div>
+          <span class="act-badge" style="background:var(--accent-soft);color:var(--accent)">CSS</span>
+        </div>
+        <div class="act-item">
+          <div class="act-dot" style="background:#7c5cfc;box-shadow:0 0 5px rgba(124,92,252,0.5)"></div>
+          <div class="act-txt">
+            <div class="act-main">142 new developers joined</div>
+            <div class="act-time">3h ago</div>
+          </div>
+          <span class="act-badge" style="background:rgba(124,92,252,0.1);color:#7c5cfc">Users</span>
+        </div>
+        <div class="act-item">
+          <div class="act-dot" style="background:#0ea5c9;box-shadow:0 0 5px rgba(14,165,201,0.5)"></div>
+          <div class="act-txt">
+            <div class="act-main">clamp() tutorial hit 10K views</div>
+            <div class="act-time">Yesterday</div>
+          </div>
+          <span class="act-badge" style="background:rgba(14,165,201,0.1);color:#0ea5c9">Viral</span>
+        </div>
+        <div class="act-item">
+          <div class="act-dot" style="background:#f59e0b;box-shadow:0 0 5px rgba(245,158,11,0.5)"></div>
+          <div class="act-txt">
+            <div class="act-main">GitHub repo starred ×38</div>
+            <div class="act-time">Yesterday</div>
+          </div>
+          <span class="act-badge" style="background:rgba(245,158,11,0.1);color:#f59e0b">GitHub</span>
+        </div>
+        <div class="act-item">
+          <div class="act-dot" style="background:var(--text-3)"></div>
+          <div class="act-txt">
+            <div class="act-main">accent-color trick file updated</div>
+            <div class="act-time">2 days ago</div>
+          </div>
+          <span class="act-badge" style="background:rgba(255,255,255,0.04);color:var(--text-2)">Edit</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- CSS Annotation -->
+<div class="ann-chip">
+  <div class="ann-lbl">// Glass CSS — Active</div>
+  <div class="ann-p">backdrop-filter: blur(32px) saturate(160%)</div>
+  <div class="ann-p d" id="ann-bg">background: rgba(255,255,255,0.038)</div>
+  <div class="ann-p dd" id="ann-bd">border: 1px solid rgba(255,255,255,0.085)</div>
+</div>
+
+<script>
+/* 
+   FLOATING BUBBLES
+ */
+const BUBBLE_COLORS_DARK = [
+  'rgba(124,92,252,VAL)',
+  'rgba(230,51,41,VAL)',
+  'rgba(14,165,201,VAL)',
+  'rgba(168,85,247,VAL)',
+  'rgba(34,197,94,VAL)',
+  'rgba(245,158,11,VAL)',
+  'rgba(236,72,153,VAL)',
+  'rgba(251,146,60,VAL)',
+];
+const BUBBLE_COLORS_LIGHT = [
+  'rgba(139,92,246,VAL)',
+  'rgba(230,51,41,VAL)',
+  'rgba(6,182,212,VAL)',
+  'rgba(168,85,247,VAL)',
+  'rgba(16,185,129,VAL)',
+  'rgba(234,179,8,VAL)',
+  'rgba(236,72,153,VAL)',
+  'rgba(249,115,22,VAL)',
+];
+
+let isDark = true;
+const bubblesEl = document.getElementById('bubbles');
+
+function getColors() {
+  return isDark ? BUBBLE_COLORS_DARK : BUBBLE_COLORS_LIGHT;
+}
+
+function spawnBubble() {
+  const colors = getColors();
+  const raw = colors[Math.floor(Math.random() * colors.length)];
+  const op  = isDark
+    ? (0.10 + Math.random() * 0.14).toFixed(2)
+    : (0.18 + Math.random() * 0.20).toFixed(2);
+  const color = raw.replace('VAL', op);
+
+  const size = 18 + Math.random() * 52; // 18–70px
+  const x    = Math.random() * 100;
+  const y    = Math.random() * 100;
+  const dur  = 2800 + Math.random() * 2400; // 2.8s–5.2s
+  const blur = 4 + Math.random() * 8;
+
+  const el = document.createElement('div');
+  el.className = 'bubble';
+  el.style.cssText = `
+    width:${size}px;height:${size}px;
+    left:${x}%;top:${y}%;
+    background:${color};
+    filter:blur(${blur}px);
+    animation-duration:${dur}ms;
+  `;
+  bubblesEl.appendChild(el);
+  setTimeout(() => el.remove(), dur + 100);
+}
+
+// Spawn 1–2 bubbles every 600ms
+function scheduleBubble() {
+  spawnBubble();
+  if (Math.random() > 0.6) spawnBubble();
+  setTimeout(scheduleBubble, 500 + Math.random() * 600);
+}
+
+// Seed some bubbles immediately
+for (let i = 0; i < 12; i++) {
+  setTimeout(spawnBubble, i * 180);
+}
+setTimeout(scheduleBubble, 2200);
+
+/* 
+   SIDEBAR TOGGLE
+ */
+let collapsed = false;
+
+function toggleSidebar() {
+  collapsed = !collapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', collapsed);
+  document.getElementById('main').classList.toggle('wide', collapsed);
+  document.getElementById('edge-icon').className = collapsed
+    ? 'ri-arrow-right-s-line'
+    : 'ri-arrow-left-s-line';
+}
+
+/* 
+   THEME TOGGLE
+ */
+function toggleTheme() {
+  isDark = !isDark;
+  const html = document.documentElement;
+  html.classList.toggle('dark', isDark);
+  html.classList.toggle('light', !isDark);
+  document.getElementById('theme-icon').className = isDark ? 'ri-moon-line' : 'ri-sun-line';
+
+  // Update annotation
+  if (!isDark) {
+    document.getElementById('ann-bg').textContent = 'background: rgba(255,255,255,0.52)';
+    document.getElementById('ann-bd').textContent = 'border: 1px solid rgba(255,255,255,0.72)';
+  } else {
+    document.getElementById('ann-bg').textContent = 'background: rgba(255,255,255,0.038)';
+    document.getElementById('ann-bd').textContent = 'border: 1px solid rgba(255,255,255,0.085)';
+  }
+}
+
+/* 
+   NAV ACTIVE
+ */
+function setActive(el, label) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pg-title').textContent = label;
+  document.getElementById('pg-crumb').textContent = label.toLowerCase();
+}
+
+function setSub(el) {
+  document.querySelectorAll('.sub-item').forEach(i => i.classList.remove('s-active'));
+  el.classList.add('s-active');
+}
+
+/* 
+   ACCORDION
+ */
+function toggleAccordion() {
+  const sub = document.getElementById('acc-sub');
+  const chv = document.getElementById('acc-chev');
+  const open = sub.classList.toggle('open');
+  chv.classList.toggle('open', open);
+}
+
+/* 
+   RIPPLE
+ */
+function ripple(e, el) {
+  const r = document.createElement('div');
+  r.className = 'rpl';
+  const rect = el.getBoundingClientRect();
+  const sz = Math.max(rect.width, rect.height);
+  r.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px`;
+  el.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+}
+
+/* 
+   CHART
+ */
+const chartData = [
+  {d:'Mon',p:50},{d:'Tue',p:69},{d:'Wed',p:73},
+  {d:'Thu',p:100},{d:'Fri',p:86},{d:'Sat',p:46},{d:'Sun',p:55}
+];
+const barCols = ['#7c5cfc','#0ea5c9','#22c55e','#e63329','#a855f7','#f59e0b','#0ea5c9'];
+const chartEl = document.getElementById('chart-bars');
+chartData.forEach((d,i)=>{
+  const col = document.createElement('div');
+  col.className = 'bar-col';
+  col.innerHTML = `<div class="bar" style="height:${d.p}%;background:${barCols[i]};opacity:${d.d==='Thu'?1:0.6}"></div><span class="bar-lbl">${d.d}</span>`;
+  chartEl.appendChild(col);
+});
+</script>
+</body>
+</html>
